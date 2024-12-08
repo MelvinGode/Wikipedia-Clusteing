@@ -1,0 +1,198 @@
+.\" Copyright (c) 2022 Stijn van Dongen
+.TH "clm close" 1 "9 Oct 2022" "clm close 22-282" "USER COMMANDS "
+.po 2m
+.de ZI
+.\" Zoem Indent/Itemize macro I.
+.br
+'in +\\$1
+.nr xa 0
+.nr xa -\\$1
+.nr xb \\$1
+.nr xb -\\w'\\$2'
+\h'|\\n(xau'\\$2\h'\\n(xbu'\\
+..
+.de ZJ
+.br
+.\" Zoem Indent/Itemize macro II.
+'in +\\$1
+'in +\\$2
+.nr xa 0
+.nr xa -\\$2
+.nr xa -\\w'\\$3'
+.nr xb \\$2
+\h'|\\n(xau'\\$3\h'\\n(xbu'\\
+..
+.if n .ll -2m
+.am SH
+.ie n .in 4m
+.el .in 8m
+..
+.SH NAME
+clm close \- Fetch connected components from graphs or subgraphs
+
+clmclose is not in actual fact a program\&. This manual
+page documents the behaviour and options of the clm program when
+invoked in mode \fIclose\fP\&. The options \fB-h\fP, \fB--apropos\fP,
+\fB--version\fP, \fB-set\fP, \fB--nop\fP are accessible
+in all \fBclm\fP modes\&. They are described
+in the \fBclm\fP manual page\&.
+.SH SYNOPSIS
+
+\fBclm close\fP -imx <fname> [options]
+
+\fBclm close\fP
+\fB-imx\fP fname (\fIspecify matrix input\fP)
+\fB-abc\fP fname (\fIspecify label input\fP)
+\fB-dom\fP fname (\fIinput domain/cluster file\fP)
+\fB[-o\fP fname (\fIoutput file\fP)\fB]\fP
+\fB[--is-undirected\fP (\fItrust input graph to be undirected\fP)\fB]\fP
+\fB[-levels\fP LO/STEP/HI[/prefix] (\fIwrite cluster size distribution for each cutoff\fP)\fB]\fP
+\fB[-levels-norm\fP num (\fIdivide each level by num to define cutoff\fP)\fB]\fP
+\fB[--write-count\fP (\fIoutput component count\fP)\fB]\fP
+\fB[--write-sizes\fP (\fIoutput component sizes (default)\fP)\fB]\fP
+\fB[--write-size-counts\fP (\fIoutput compressed list of component sizes\fP)\fB]\fP
+\fB[--write-cc\fP (\fIoutput components as clustering\fP)\fB]\fP
+\fB[--write-block\fP (\fIoutput graph restricted to -dom argument\fP)\fB]\fP
+\fB[--write-blockc\fP (\fIoutput graph complement of -dom argument\fP)\fB]\fP
+\fB[-cc-bound\fP num (\fIselect components with size at least num\fP)\fB]\fP
+\fB[--sl\fP (\fIoutput single linkage tree as list of joins (for -imx input)\fP)\fB]\fP
+\fB[-write-sl-list\fP fname (\fIwrite list of join order with weights\fP)\fB]\fP
+\fB[-tf\fP spec (\fIapply tf-spec to input matrix\fP)\fB]\fP
+\fB[-h\fP (\fIprint synopsis, exit\fP)\fB]\fP
+\fB[--apropos\fP (\fIprint synopsis, exit\fP)\fB]\fP
+\fB[--version\fP (\fIprint version, exit\fP)\fB]\fP
+.SH DESCRIPTION
+
+Use \fBclm close\fP to fetch the connected components from a graph\&. Different
+output modes are supported (see below)\&. In matrix mode (i\&.e\&. using
+the \fB-imx\fP option) the output returned with
+\fB--write-cc\fP can be used in conjunction with \fBmcxsubs\fP
+to retrieve individual subgraphs corresponding to connected components\&.
+.SH OPTIONS
+
+.ZI 2m "\fB-abc\fP <fname> (\fIlabel input\fP)"
+\&
+.br
+The file name for input that is in label format\&.
+.in -2m
+
+.ZI 2m "\fB-imx\fP <fname> (\fIinput matrix\fP)"
+\&
+.br
+The file name for input that is in mcl native matrix format\&.
+.in -2m
+
+.ZI 2m "\fB-o\fP fname (\fIoutput file\fP)"
+\&
+.br
+Specify the file where output is sent to\&. The default is STDOUT\&.
+.in -2m
+
+.ZI 2m "\fB-dom\fP fname (\fIinput domain/cluster file\fP)"
+\&
+.br
+If this option is used, clm close will, as a first step,
+for each of the domains in file\ \&\fIfname\fP retrieve the associated
+subgraph from the input graph\&. These are then further decomposed into
+connected components, and the program will process these in the normal
+manner\&.
+.in -2m
+
+.ZI 2m "\fB--write-count\fP (\fIoutput component count\fP)"
+\&
+'in -2m
+.ZI 2m "\fB--write-sizes\fP (\fIoutput component sizes (default)\fP)"
+\&
+'in -2m
+.ZI 2m "\fB--write-size-counts\fP (\fIoutput compressed list of component sizes\fP)"
+\&
+'in -2m
+.ZI 2m "\fB--write-cc\fP (\fIoutput components as clustering\fP)"
+\&
+'in -2m
+.ZI 2m "\fB--write-block\fP (\fIoutput graph restricted to -dom argument\fP)"
+\&
+'in -2m
+.ZI 2m "\fB--write-blockc\fP (\fIoutput graph complement of -dom argument\fP)"
+\&
+'in -2m
+'in +2m
+\&
+.br
+The default behaviour is currently to output the sizes of the
+connected components\&. It is also possible to simply output
+the number of components with \fB--write-count\fP, to write
+a counted list of sizes with \fB--write-size-counts\fP, or to
+write the components as a clustering in mcl format with
+\fB-write-cc\fP\&. Even more options exist: it is possible
+to output the restriction of the input graph to a domain, or
+to output the complement of this restriction\&.
+.in -2m
+
+.ZI 2m "\fB-levels\fP LO/STEP/HI[/prefix] (\fIwrite cluster size distribution for each cutoff\fP)"
+\&
+'in -2m
+.ZI 2m "\fB-levels-norm\fP num (\fIdivide each level by num to define cutoff\fP)"
+\&
+'in -2m
+'in +2m
+\&
+.br
+Use \fB-levels\fP to inspect the cluster size distribution at various cut-offs by
+specifying a triplet of numbers (separated by forward slashes), the first of which
+is the starting point, the second is the step size, and the third is the end point\&.
+If a fourth argument (preceded by another slash) is given, all clusterings are
+written to a file based on the supplied argument as file name prefix\&.
+The cut-off can be further varied by the argument to \fB-levels-norm\fP\&.
+.in -2m
+
+.ZI 2m "\fB--sl\fP (\fIoutput single linkage tree as list of joins (for -imx input)\fP)"
+\&
+'in -2m
+.ZI 2m "\fB-write-sl-list\fP fname (\fIwrite list of join order with weights\fP)"
+\&
+'in -2m
+'in +2m
+\&
+.br
+A primary use case for this is to apply single link clustering to the rcl
+(restricted contingency linkage) graph that is output by \fBclm vol\fP with its
+\fBwrite-rcl\fP option\&. This rcl graph encodes a consensus clustering
+derived from the multiple clusterings that are given to \fBclm vol\fP\&.
+
+The output (save with \fB-o\fP or UNIX redirection) can be supplied to
+\fBrcl-res\&.pl\fP with a list of varying resolution parameters to produce a small
+number of nested clusterings\&. The resolution
+parameters (second and subsequent arguments) to \fBrcl-res\&.pl\fP are set sizes;
+For each of the supplied resolutions \fIres\fP the script will descend
+the tree as long as the current node has some split below it where both
+clusters are of size at least \fIres\fP\&. Note that the resulting
+clustering may still have smaller clusters and singletons (resulting from
+other splits)\&.
+
+The mcl distribution has an example script \fBgraphs/rcl-example\&.sh\fP
+that illustrates the different steps\&.
+.in -2m
+
+.ZI 2m "\fB--is-undirected\fP (\fIomit graph undirected check\fP)"
+\&
+.br
+With this option the transformation to make sure
+that the input is undirected is omitted\&. This will
+be slightly faster\&. Using this option while the
+input is directed may lead to erronenous results\&.
+.in -2m
+
+.ZI 2m "\fB-cc-bound\fP num (\fIselect components with size at least num\fP)"
+\&
+.br
+Transform the input matrix values according
+to the syntax described in \fBmcxio(5)\fP\&.
+.in -2m
+.SH AUTHOR
+
+Stijn van Dongen\&.
+.SH SEE ALSO
+
+\fBmclfamily(7)\fP for an overview of all the documentation
+and the utilities in the mcl family\&.
